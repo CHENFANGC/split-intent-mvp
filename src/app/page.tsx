@@ -12,8 +12,20 @@ import type { IntentDataState } from "@/types/intents";
 
 type Screen = "create" | "pay" | "settled";
 
+function getDemoScreen(): Screen | null {
+  if (typeof window === "undefined") return null;
+
+  const demoScreen = new URLSearchParams(window.location.search).get("demoScreen");
+  if (demoScreen === "create" || demoScreen === "pay" || demoScreen === "settled") {
+    return demoScreen;
+  }
+
+  return null;
+}
+
 export default function Page() {
-  const [screen, setScreen] = useState<Screen>("create");
+  const [screen, setScreen] = useState<Screen>(() => getDemoScreen() ?? "create");
+  const [isDemoMode] = useState(() => Boolean(getDemoScreen()));
   const [dataState, setDataState] = useState<IntentDataState>("loading");
   const [message, setMessage] = useState("Loading LI.FI Intents route data...");
 
@@ -38,7 +50,7 @@ export default function Page() {
       <AnimatePresence mode="wait">
         <motion.div
           key={screen}
-          initial={{ opacity: 0, y: 18 }}
+          initial={isDemoMode ? false : { opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -18 }}
           transition={{ duration: 0.28, ease: "easeOut" }}
@@ -61,4 +73,3 @@ export default function Page() {
     </AppShell>
   );
 }
-

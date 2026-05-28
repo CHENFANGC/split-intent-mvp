@@ -3,8 +3,12 @@ node_modules/
 out/
 dist/
 coverage/
+tsconfig.tsbuildinfo
 .env
 .env.local
 .DS_Store
 .superpowers/
 .worktrees/
+demo/generated/
+demo/*.mp4
+!demo/split-intent-demo-clean-female.mp4
