@@ -12,3 +12,4 @@ tsconfig.tsbuildinfo
 demo/generated/
 demo/*.mp4
 !demo/split-intent-demo-clean-female.mp4
+.vercel
