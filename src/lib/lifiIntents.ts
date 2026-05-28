@@ -22,35 +22,32 @@ function asArray(value: unknown): unknown[] {
 }
 
 export function normalizeChains(input: unknown): SupportedChain[] {
-  return asArray(input)
-    .map((item) => {
-      if (!item || typeof item !== "object") return null;
+  return asArray(input).flatMap((item) => {
+      if (!item || typeof item !== "object") return [];
       const record = item as Record<string, unknown>;
       const id = Number(record.id ?? record.chainId);
       const name = String(record.name ?? record.displayName ?? record.key ?? "");
       const key = String(record.key ?? record.name ?? id);
       const logoUrl = typeof record.logoURI === "string" ? record.logoURI : undefined;
 
-      if (!Number.isFinite(id) || !name) return null;
-      return { id, name, key: key.toLowerCase(), logoUrl };
-    })
-    .filter((chain): chain is SupportedChain => Boolean(chain));
+      if (!Number.isFinite(id) || !name) return [];
+      return [{ id, name, key: key.toLowerCase(), logoUrl }];
+    });
 }
 
 export function normalizeRoutes(input: unknown): SupportedRoute[] {
   return asArray(input)
-    .map((item) => {
-      if (!item || typeof item !== "object") return null;
+    .flatMap((item) => {
+      if (!item || typeof item !== "object") return [];
       const record = item as Record<string, unknown>;
       const fromChainId = Number(record.fromChainId ?? record.sourceChainId ?? record.fromChain);
       const toChainId = Number(record.toChainId ?? record.destinationChainId ?? record.toChain);
       const fromToken = String(record.fromToken ?? record.sourceToken ?? record.inputToken ?? "USDC");
       const toToken = String(record.toToken ?? record.destinationToken ?? record.outputToken ?? "USDC");
 
-      if (!Number.isFinite(fromChainId) || !Number.isFinite(toChainId)) return null;
-      return { fromChainId, toChainId, fromToken, toToken };
-    })
-    .filter((route): route is SupportedRoute => Boolean(route));
+      if (!Number.isFinite(fromChainId) || !Number.isFinite(toChainId)) return [];
+      return [{ fromChainId, toChainId, fromToken, toToken }];
+    });
 }
 
 export async function fetchIntentData(): Promise<IntentDataResult> {
@@ -92,4 +89,3 @@ export async function fetchIntentData(): Promise<IntentDataResult> {
     };
   }
 }
-
